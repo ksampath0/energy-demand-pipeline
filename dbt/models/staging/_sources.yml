@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: raw_energy
+    database: "{{ env_var('GCLOUD_PROJECT') }}"
+    schema: raw_energy
+    tables:
+      - name: eia_demand_raw
+        loaded_at_field: ingested_at
+        freshness:
+          warn_after: {count: 30, period: hour}
+          error_after: {count: 48, period: hour}

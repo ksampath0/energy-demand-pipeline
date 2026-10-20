@@ -1,0 +1,13 @@
+name: energydemand_dbt
+version: "1.0.0"
+profile: energydemand_dbt
+
+model-paths: ["models"]
+test-paths: ["tests"]
+
+models:
+  energydemand_dbt:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

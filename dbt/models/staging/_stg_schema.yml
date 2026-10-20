@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: stg_eia_demand
+    description: "Cleaned, deduplicated hourly demand and day-ahead forecast for SOCO."
+    columns:
+      - name: demand_hour
+        description: "Hour of the observation, in UTC."
+        tests:
+          - not_null
+      - name: type_code
+        description: "D = actual demand, DF = day-ahead forecast."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['D', 'DF']
+      - name: demand_mwh
+        tests:
+          - not_null

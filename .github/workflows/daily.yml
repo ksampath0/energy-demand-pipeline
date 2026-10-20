@@ -1,0 +1,43 @@
+name: daily-pipeline
+
+on:
+  schedule:
+    - cron: "0 11 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    env:
+      GCLOUD_PROJECT: ${{ secrets.GCLOUD_PROJECT }}
+      EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcloudp-key.json
+
+    steps:
+      - name: Get Code
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install Packages
+        run: pip install -r requirements.txt
+
+      - name: Build Credentials File
+        run: echo '${{ secrets.GCLOUD_SA_KEY }}' > "$GOOGLE_APPLICATION_CREDENTIALS"
+
+      - name: Download New EIA Data
+        run: python download/get_eia.py
+
+      - name: Build and Test dbt Models
+        working-directory: dbt
+        run: |
+          dbt deps --profiles-dir .
+          dbt build --profiles-dir .
+
+      - name: Delete Credentials File
+        if: always()
+        run: rm -f "$GOOGLE_APPLICATION_CREDENTIALS"
