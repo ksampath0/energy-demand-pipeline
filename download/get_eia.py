@@ -42,10 +42,10 @@ def get_newest_day(client):
     newest_hour = results[0].newest
 
     if newest_hour is None:
-        return first_start.strtime("%Y-%m-%dT%H")
+        return first_start.strftime("%Y-%m-%dT%H")
 
     start = newest_hour - timedelta(days=OVERLAP_DAYS)
-    return start.strtime("%Y-%m-%dT%H")
+    return start.strftime("%Y-%m-%dT%H")
 
 #Getting the data from the API
 
